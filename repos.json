@@ -1,10 +1,10 @@
 [
   {
     "kernelSource": {
-      "name": "DogDay-KernelSU",
-      "repo": "https://codeberg.org/DogDayAndroid/android_kernel_xiaomi_thyme",
-      "branch": "lineage-20.0",
-      "device": "thyme"
+      "name": "MiCode",
+      "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource/tree/topaz-t-oss",
+      "branch": "topaz-t-oss",
+      "device": "topaz"
     },
     "withKernelSU": true,
     "toolchains": [
