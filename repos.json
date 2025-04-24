@@ -14,52 +14,69 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-    - name: Checkout Kernel Source
-      uses: actions/checkout@v4
-      with:
-        repository: MiCode/Xiaomi_Kernel_OpenSource
-        ref: topaz-t-oss
-        path: kernel
-        submodules: recursive
+      - name: Checkout Kernel Source
+        uses: actions/checkout@v4
+        with:
+          repository: MiCode/Xiaomi_Kernel_OpenSource
+          ref: topaz-t-oss
+          path: kernel
+          submodules: recursive
 
-    - name: Set up Build Environment
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          build-essential libncurses-dev bison flex \
-          libssl-dev libelf-dev bc git ccache python3 \
-          zlib1g-dev liblz4-tool
+      - name: Set up Build Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential libncurses-dev bison flex \
+            libssl-dev libelf-dev bc git ccache python3 \
+            zlib1g-dev liblz4-tool
 
-    - name: Prepare KernelSU Next
-      if: inputs.with_kernelsu
-      run: |
-        git clone --depth=1 https://github.com/tiann/KernelSU -b next kernelsu
-        cd kernelsu && git submodule update --init
+      - name: Prepare KernelSU Next
+        if: inputs.with_kernelsu
+        run: |
+          git clone --depth=1 https://github.com/tiann/KernelSU -b next kernelsu
+          cd kernelsu && git submodule update --init
 
-    - name: Set up Clang Toolchain
-      run: |
-        mkdir -p toolchain
-        git clone --depth=1 \
-          https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 \
-          -b android13-release toolchain/clang-14
-        git clone --depth=1 \
-          https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 \
-          toolchain/gcc
+      - name: Set up Clang Toolchain
+        run: |
+          mkdir -p toolchain
+          git clone --depth=1 \
+            https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 \
+            -b android13-release toolchain/clang-14
+          git clone --depth=1 \
+            https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 \
+            toolchain/gcc
 
-    - name: Apply KernelSU Patches
-      if: inputs.with_kernelsu
-      run: |
-        cd kernelsu
-        python3 kernel_patcher.py --arch arm64 \
-          --kernel-source ../kernel \
-          --target topaz_defconfig
-        cd ..
+      - name: Apply KernelSU Patches
+        if: inputs.with_kernelsu
+        run: |
+          cd kernelsu
+          python3 kernel_patcher.py --arch arm64 \
+            --kernel-source ../kernel \
+            --target topaz_defconfig
+          cd ..
 
-    - name: Build Kernel
-      env:
-        ARCH: arm64
-        SUBARCH: arm64
-        LLVM: 1
-        CC: clang
-        CLANG_TRIPLE: aarch64-linux-gnu-
-        CROSS_COMPILE: aarch
+      - name: Build Kernel
+        env:
+          ARCH: arm64
+          SUBARCH: arm64
+          LLVM: 1
+          CC: clang
+          CLANG_TRIPLE: aarch64-linux-gnu-
+          CROSS_COMPILE: aarch64-linux-android-
+          CROSS_COMPILE_ARM32: arm-linux-gnueabi-
+          PATH: ${{ github.workspace }}/toolchain/clang-14/bin:$PATH
+        run: |
+          cd kernel
+          make O=out topaz_defconfig
+          
+          if ${{ inputs.with_kernelsu }}; then
+            scripts/config --file out/.config \
+              -e KPROBES \
+              -e HAVE_KPROBES \
+              -e KPROBE_EVENTS \
+              -e OVERLAY_FS
+          fi
+          
+          make -j$(nproc --all) O=out
+          mkdir -p ../output
+          cp out/arch/arm64/boot/Image.gz-dtb ../output/
