@@ -1,10 +1,10 @@
 [
   {
     "kernelSource": {
-      "name": "MiCode",
-      "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource/tree/topaz-t-oss",
-      "branch": "topaz-t-oss",
-      "device": "topaz"
+      "name": "aukkkm",
+      "repo": "https://github.com/Thagoo/platform_kernel_xiaomi_msm8917",
+      "branch": "msm8918",
+      "device": "rolex"
     },
     "withKernelSU": true,
     "toolchains": [
