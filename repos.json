@@ -6,7 +6,7 @@
       "device": "topaz"
     },
     "withKernelSU": true,
-    "toolchains": ]
+    "toolchains": [
       {
         "repo": "https://android.googlesource.com/platform/prebuilts/gas/linux-x86",
         "branch": "master",
