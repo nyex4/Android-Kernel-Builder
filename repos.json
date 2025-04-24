@@ -1,7 +1,7 @@
 [  {
     "kernelSource": {
       "name": "wong_ireng_jembuten",
-      "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource/tree/topaz-t-oss",
+      "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource",
       "branch": "topaz-t-oss",
       "device": "topaz"
     },
