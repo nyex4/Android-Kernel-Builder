@@ -2,18 +2,18 @@
     "kernelSource": {
       "name": "wong_ireng_jembuten",
       "repo": "https://github.com/MiCode/Xiaomi_Kernel_OpenSource/tree/topaz-t-oss",
-      "branch": "topaz-t-oss",
+      "branch": "xiaomi",
       "device": "topaz"
     },
     "withKernelSU": true,
-    "toolchains": [
+    "toolchains": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/,
       {
         "repo": "https://android.googlesource.com/platform/prebuilts/gas/linux-x86",
         "branch": "master",
         "name": "gas"
       },
       {
-        "repo": "https://gitlab.com/ThankYouMario/android_prebuilts_clang-standalone/",
+        "repo": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/",
         "branch": "11",
         "name": "clang"
       }
